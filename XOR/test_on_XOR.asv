@@ -1,0 +1,27 @@
+% test on XOR
+
+XOR = [0,0;0,1;1,0;1,1];
+labels = [-1;1;1;-1];
+
+h1 = 4;
+nu = 0.01;
+
+network = cell(2,1);
+network{1}.W = randn(h1,2);
+network{1}.B = zeros(h1,1);
+
+network{2}.W = randn(h1,1);
+network{2}.B = 0;
+
+[a1,a2,z1] = forward(XOR,network);
+
+error_init = mean(log(ones(size(labels,1),1)+exp(-labels.*a2')));
+
+num_batches = 10;
+for i=1:num_batches
+    [network] = back(XOR,labels,network,a1,a2,z1);
+    
+    [a1,a2,z1] = forward(XOR,network);
+    
+    error = mean(log(ones(size(labels,1),1)+exp(-labels.*a2')));
+end
